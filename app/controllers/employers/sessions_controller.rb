@@ -29,7 +29,7 @@ class Employers::SessionsController < Devise::SessionsController
   def respond_with(resource, options = {})
     if resource.persisted?
       render json: {
-        status: {code: 200, message: 'Sign In Successful'}
+        status: {code: 200, message: 'Sign In Successful'},
         data: current_employer
       }, status: :ok
     else
@@ -39,13 +39,13 @@ class Employers::SessionsController < Devise::SessionsController
     end
   end
 
-  def respond_to_on_destroy(resource, options = {})
-    jwt_paylod = JTW.decode(request.headers['Authorization'].split(' ')[1],
+  def respond_to_on_destroy
+    jwt_payload = JWT.decode(request.headers['Authorization'].split(' ')[1],
       Rails.application.credentials.fetch(:secret_key_base)).first
 
-    current_user = jwt_payload['sub']
+    current_employer = Employer.find(jwt_payload['sub'])
 
-    if current_user
+    if current_employer
       render json: {
         status: 200,
         message: 'Employer Signed Out Successfully'

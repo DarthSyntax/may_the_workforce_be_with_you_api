@@ -10,18 +10,27 @@ class JobsController < ApplicationController
 
   # GET /jobs/1
   def show
-    render json: @job
+    render json: {job: @job, users: @job.users }
+
   end
 
   # POST /jobs
   def create
     @job = Job.new(job_params)
+    current_employer.jobs << @job
 
     if @job.save
       render json: @job, status: :created, location: @job
     else
       render json: @job.errors, status: :unprocessable_entity
     end
+  end
+
+  # POST /jobs/1/apply
+  def apply
+    @job = Job.find(params[:id])
+    @job.users << current_user
+    render json: @job
   end
 
   # PATCH/PUT /jobs/1

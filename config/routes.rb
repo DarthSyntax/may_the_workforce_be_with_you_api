@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   devise_for :employers, controllers: {sessions: 'employers/sessions', registrations: 'employers/registrations'}
   resources :employers
-  resources :jobs
+  resources :jobs do
+    post 'apply', on: :member
+  end
   devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations'}
   resources :users
 
