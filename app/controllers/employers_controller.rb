@@ -7,6 +7,6 @@ class EmployersController < ApplicationController
 
   def show
     @employer = Employer.find(params[:id])
-    render json: @employer
+    render json: {employer: @employer, jobs: @employer.jobs}
   end
 end

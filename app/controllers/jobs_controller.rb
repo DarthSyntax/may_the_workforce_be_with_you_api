@@ -10,6 +10,7 @@ class JobsController < ApplicationController
 
   # GET /jobs/1
   def show
+    @job = Job.find(params[:id])
     render json: {job: @job, users: @job.users }
 
   end
@@ -29,8 +30,16 @@ class JobsController < ApplicationController
   # POST /jobs/1/apply
   def apply
     @job = Job.find(params[:id])
-    @job.users << current_user
-    render json: @job
+    candidate = User.all.find {|user| user.full_name == params[:full_name]}
+    if @job && !(@job.users.include?(candidate))
+      @job.users << candidate
+      render json: {job: @job, candidate: candidate}
+    else
+      render json: {
+        status: 400,
+        message: "#{candidate.full_name} has already applied to this job"
+       }, status: :unprocessable_entity
+    end
   end
 
   # PATCH/PUT /jobs/1
