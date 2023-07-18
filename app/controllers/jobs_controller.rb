@@ -18,7 +18,8 @@ class JobsController < ApplicationController
   # POST /jobs
   def create
     @job = Job.new(job_params)
-    current_employer.jobs << @job
+    logged_in_employer = Employer.find(params[:employer_id])
+    logged_in_employer.jobs << @job
 
     if @job.save
       render json: @job, status: :created, location: @job
